@@ -3,15 +3,27 @@ import request from 'superagent';
 
 class UserInputArea extends React.Component {
     handleSubmit = async (e) => {
-        e.preventDefault(e);
+        e && e.preventDefault(e);
         this.props.updateInputData({
             isLoading: true,
         });
 
-        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000${this.props.appState.searchText ? '&' + this.props.appState.searchCategory + '=' + this.props.appState.searchText : ''}`);
+        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000${this.props.appState.searchText ? '&' + this.props.appState.searchCategory + '=' + this.props.appState.searchText : ''}`),
+            pokeData = data.body.results,
+            sortedPokeData = pokeData.sort(function (a, b) {
+                let first = a.pokemon.toLowerCase(),
+                    second = b.pokemon.toLowerCase();
+
+                if (first < second) {
+                    return -1;
+                } else if (second < first) {
+                    return 1;
+                }
+                return 0;
+            })
 
         this.props.updateInputData({
-            filteredData: data.body.results,
+            filteredData: sortedPokeData,
             isLoading: false,
         });
     }
@@ -26,6 +38,10 @@ class UserInputArea extends React.Component {
         this.props.updateInputData({
             searchCategory: e.target.value
         })
+    }
+
+    componentDidMount = () => {
+        this.handleSubmit();
     }
 
     render() {

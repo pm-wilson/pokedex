@@ -11,7 +11,7 @@ class App extends React.Component {
     isLoading: false,
   }
 
-  HandleStateChange(obj) {
+  HandleStateChange = (obj) => {
     this.setState(obj)
   }
 
@@ -20,7 +20,7 @@ class App extends React.Component {
       <main>
         <HeaderArea />
         <UserInputArea updateFilterData={this.HandleStateChange} />
-        <BodyArea />
+        <BodyArea filtereData={this.state.filteredData} />
         <FooterArea />
       </main>
     );

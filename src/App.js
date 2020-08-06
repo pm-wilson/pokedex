@@ -1,26 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import HeaderArea from './HeaderArea';
+import FooterArea from './FooterArea';
+import UserInputArea from './UserInputArea';
+import BodyArea from './BodyArea';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  state = {
+    filteredData: [],
+    isLoading: false,
+  }
+
+  HandleStateChange = (obj) => {
+    this.setState(obj)
+  }
+
+  render() {
+    return (
+      <main>
+        <HeaderArea />
+        <UserInputArea updateFilterData={this.HandleStateChange} />
+        <BodyArea filtereData={this.state.filteredData} />
+        <FooterArea />
+      </main>
+    );
+  }
+
 }
 
 export default App;

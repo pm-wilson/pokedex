@@ -9,6 +9,8 @@ class App extends React.Component {
   state = {
     filteredData: [],
     isLoading: false,
+    searchOption: 'pokemon',
+    searchText: '',
   }
 
   HandleStateChange = (obj) => {

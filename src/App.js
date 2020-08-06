@@ -9,8 +9,8 @@ class App extends React.Component {
   state = {
     filteredData: [],
     isLoading: false,
-    searchOption: 'pokemon',
     searchText: '',
+    searchCategory: 'pokemon',
   }
 
   HandleStateChange = (obj) => {
@@ -18,10 +18,12 @@ class App extends React.Component {
   }
 
   render() {
+    console.log("app state", this.state)
+
     return (
       <main>
         <HeaderArea />
-        <UserInputArea updateFilterData={this.HandleStateChange} />
+        <UserInputArea appState={this.state} updateInputData={this.HandleStateChange} />
         <BodyArea filtereData={this.state.filteredData} />
         <FooterArea />
       </main>

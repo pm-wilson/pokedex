@@ -4,21 +4,28 @@ import request from 'superagent';
 class UserInputArea extends React.Component {
     handleSubmit = async (e) => {
         e.preventDefault(e);
-        this.props.updateFilterData({
+        this.props.updateInputData({
             isLoading: true,
         });
 
-        const nameToSearch = e.target.searchName.value,
-            typeToSearch = e.target.searchType.value,
-            attackFilter = Number(e.target.filterAttack.value),
-            defenseFilter = Number(e.target.filterDefense.value),
-            data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000${nameToSearch ? '&pokemon=' + nameToSearch : ''}${typeToSearch ? '&type=' + typeToSearch : ''}${attackFilter ? '&attack=' + attackFilter : ''}${defenseFilter ? '&defense=' + defenseFilter : ''}
-            `);
+        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000${this.props.appState.searchText ? '&' + this.props.appState.searchCategory + '=' + this.props.appState.searchText : ''}`);
 
-        this.props.updateFilterData({
+        this.props.updateInputData({
             filteredData: data.body.results,
             isLoading: false,
         });
+    }
+
+    handleSearchText = (e) => {
+        this.props.updateInputData({
+            searchText: e.target.value
+        })
+    }
+
+    handleSearchCategory = (e) => {
+        this.props.updateInputData({
+            searchCategory: e.target.value
+        })
     }
 
     render() {
@@ -27,20 +34,17 @@ class UserInputArea extends React.Component {
                 <h4>Filter Controls</h4>
                 <form onSubmit={this.handleSubmit}>
                     <label>
-                        <span>Search Name</span>
-                        <input onChange={this.handleNameSearch} name='searchName' />
+                        <span>Search for:</span>
+                        <input onChange={this.handleSearchText} name='searchName' />
                     </label>
                     <label>
-                        <span>Search type</span>
-                        <input name='searchType' />
-                    </label>
-                    <label>
-                        <span>Filter Attack</span>
-                        <input name='filterAttack' type='number' />
-                    </label>
-                    <label>
-                        <span>Filter Defense</span>
-                        <input name='filterDefense' type='number' />
+                        <span>by</span>
+                        <select onChange={this.handleSearchCategory} name='category'>
+                            <option value='pokemon'>name</option>
+                            <option value='type'>type</option>
+                            <option value='attack'>attack</option>
+                            <option value='defense'>defense</option>
+                        </select>
                     </label>
                     <button>Submit</button>
                 </form>

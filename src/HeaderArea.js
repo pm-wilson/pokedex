@@ -5,7 +5,8 @@ class HeaderArea extends React.Component {
     render() {
         return (
             <header>
-                <h1>Patricks Pokedex</h1>
+                <h1>The Greatest Pokedex Ever Made</h1>
+                <h4>tribute..</h4>
             </header>
         );
     }

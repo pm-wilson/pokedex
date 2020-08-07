@@ -4,27 +4,23 @@ import request from 'superagent';
 class UserInputArea extends React.Component {
     handleSubmit = async (e) => {
         e && e.preventDefault(e);
+        this.fetchData();
+    }
+
+    fetchData = async () => {
         this.props.updateInputData({
             isLoading: true,
         });
 
-        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000${this.props.appState.appState.searchText ? '&' + this.props.appState.appState.searchCategory + '=' + this.props.appState.appState.searchText : ''}`),
-            pokeData = data.body.results,
-            sortedPokeData = pokeData.sort(function (a, b) {
-                let first = a.pokemon,
-                    second = b.pokemon;
-
-                if (first < second) {
-                    return -1;
-                } else if (second < first) {
-                    return 1;
-                }
-                return 0;
-            })
+        const { searchPage } = this.props.appState;
+        const { searchText, searchCategory } = this.props.appState.appState;
+        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?page=${searchPage}perPage=20${searchText ? '&' + searchCategory + '=' + searchText : ''}`),
+            pokeData = data.body.results;
 
         this.props.updateInputData({
-            filteredData: sortedPokeData,
+            filteredData: pokeData,
             isLoading: false,
+            totalPoke: data.body.count,
         });
     }
 
@@ -42,37 +38,28 @@ class UserInputArea extends React.Component {
 
     componentDidMount = () => {
         const getFirstData = async () => {
-            this.props.updateInputData({
-                isLoading: true,
-            });
-
-            const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000`),
-                pokeData = data.body.results,
-                sortedPokeData = pokeData.sort(function (a, b) {
-                    let first = a.pokemon,
-                        second = b.pokemon;
-
-                    if (first < second) {
-                        return -1;
-                    } else if (second < first) {
-                        return 1;
-                    }
-                    return 0;
-                })
-
-            this.props.updateInputData({
-                filteredData: sortedPokeData,
-                isLoading: false,
-            });
+            this.fetchData();
         }
         if (this.props.appState.appState.filteredData.length === 0) {
             getFirstData();
         }
     }
 
+    pageUp = () => {
+        this.props.updateInputData({
+            searchPage: this.props.searchPage + 1,
+        })
+    }
+
+    pageUp = () => {
+        this.props.updateInputData({
+            searchPage: this.props.searchPage - 1,
+        })
+    }
+
     render() {
         return (
-            <div>
+            <div className='user-input'>
                 <h4>Filter Controls</h4>
                 <form onSubmit={this.handleSubmit}>
                     <label>
@@ -90,6 +77,11 @@ class UserInputArea extends React.Component {
                     </label>
                     <button>Submit</button>
                 </form>
+                <div>
+                    <button className='margin-top' onChange={this.pageUp}>Page +</button>
+                    <div>1</div>
+                    <button onChange={this.pageDown}>Page -</button>
+                </div>
             </div>
         );
     }

@@ -19,8 +19,6 @@ class BodyArea extends React.Component {
     }
 
     render() {
-
-        console.log(this.state.data.color_2)
         const {
             ability_1,
             ability_2,
@@ -58,11 +56,11 @@ class BodyArea extends React.Component {
                 <div>
                     <p>Attack: {attack} / Special Attack: {special_attack}</p>
                     <p>Defense: {defense} / Special Defense: {special_defense}</p>
-                    <p>Abilities: {ability_1}{ability_2 !== 'NA' ? ' and ' + ability_2 : ''}</p>
-                    <p>{ability_hidden ? 'Hidden Ability: ' + ability_hidden : ''}</p>
+                    <p className='capitalize'>Abilities: {ability_1}{ability_2 !== 'NA' ? ' and ' + ability_2 : ''}</p>
+                    <p className='capitalize'>{ability_hidden ? 'Hidden Ability: ' + ability_hidden : ''}</p>
                     <p>Hp: {hp}</p>
                     <p>Speed: {speed}</p>
-                    <p>Types: {type_1}{type_2 !== 'NA' ? ' and ' + type_2 : ''}</p>
+                    <p className='capitalize'>Types: {type_1}{type_2 !== 'NA' ? ' and ' + type_2 : ''}</p>
                     <Link to='/'>Back to Search</Link>
                 </div>
             </section>

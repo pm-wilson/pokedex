@@ -12,17 +12,17 @@ class SearchPage extends React.Component {
     }
 
     HandleStateChange = (obj) => {
-        this.setState(obj)
+        this.setState(obj);
     }
 
     render() {
-        const { loading } = this.state.isLoading;
-
+        const { isLoading } = this.state;
+        console.log('state', this.state)
         return (
-            { loading?<LoadingSpinner /> : <SearchDisplay />
-    }
+            <div>{isLoading ? <LoadingSpinner /> :
+                <SearchDisplay appState={this.state} updateInputData={this.HandleStateChange} />}</div>
         );
-}
+    }
 }
 
 export default SearchPage;

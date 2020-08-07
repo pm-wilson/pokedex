@@ -8,7 +8,7 @@ class UserInputArea extends React.Component {
             isLoading: true,
         });
 
-        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000${this.props.appState.searchText ? '&' + this.props.appState.searchCategory + '=' + this.props.appState.searchText : ''}`),
+        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000${this.props.appState.appState.searchText ? '&' + this.props.appState.appState.searchCategory + '=' + this.props.appState.appState.searchText : ''}`),
             pokeData = data.body.results,
             sortedPokeData = pokeData.sort(function (a, b) {
                 let first = a.pokemon,
@@ -41,7 +41,33 @@ class UserInputArea extends React.Component {
     }
 
     componentDidMount = () => {
-        this.handleSubmit();
+        const getFirstData = async () => {
+            this.props.updateInputData({
+                isLoading: true,
+            });
+
+            const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000`),
+                pokeData = data.body.results,
+                sortedPokeData = pokeData.sort(function (a, b) {
+                    let first = a.pokemon,
+                        second = b.pokemon;
+
+                    if (first < second) {
+                        return -1;
+                    } else if (second < first) {
+                        return 1;
+                    }
+                    return 0;
+                })
+
+            this.props.updateInputData({
+                filteredData: sortedPokeData,
+                isLoading: false,
+            });
+        }
+        if (this.props.appState.appState.filteredData.length === 0) {
+            getFirstData();
+        }
     }
 
     render() {

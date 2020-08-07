@@ -60,7 +60,10 @@ h2 {
   text-align: center;
 }
 
-.load-screen {
-  display: flex;
-  align-self: center;
+.load-spinner {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  font-size: 80px;
 }

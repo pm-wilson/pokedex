@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
-import UserInputArea from './UserInputArea';
-import BodyArea from './BodyArea';
+import LoadingSpinner from './LoadingSpinner';
+import SearchDisplay from './SearchDisplay';
 
 class SearchPage extends React.Component {
     state = {
@@ -16,14 +16,13 @@ class SearchPage extends React.Component {
     }
 
     render() {
-        return (
-            <main>
-                <UserInputArea appState={this.state} updateInputData={this.HandleStateChange} />
-                <BodyArea appState={this.state} filtereData={this.state.filteredData} />
-            </main>
-        );
-    }
+        const { loading } = this.state.isLoading;
 
+        return (
+            { loading?<LoadingSpinner /> : <SearchDisplay />
+    }
+        );
+}
 }
 
 export default SearchPage;

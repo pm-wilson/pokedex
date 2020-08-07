@@ -3,12 +3,11 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Link,
-  useParams
 } from 'react-router-dom';
 import SearchPage from './SearchPage/SearchPage.js';
 import DetailPage from './DetailPage/DetailPage.js';
 import HeaderArea from './HeaderArea';
+import FooterArea from './FooterArea';
 
 export default class App extends Component {
   render() {
@@ -28,6 +27,7 @@ export default class App extends Component {
               render={(routerProps) => <DetailPage {...routerProps} />}
             />
           </Switch>
+          <FooterArea />
         </Router>
       </div>
     )

@@ -10,9 +10,9 @@ header {
   position: fixed;
   background-color: orange;
   width: 100%;
-  height: 200px;
+  height: 150px;
   z-index: 2;
-  padding: 20px;
+  padding: 10px;
   text-align: center;
   border-bottom: 5px solid black;
   top: 0;
@@ -41,17 +41,21 @@ main {
   position: absolute;
   top: 230px;
   text-align: center;
+}
+
+.poke-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.poke-item {
   margin: 20px;
-  box-shadow: 5px 5px;
   border-radius: 10px;
   border: 2px solid gray;
+  box-shadow: 5px 5px;
   background-color: lightgray;
-  width: 500px;
+  width: 700px;
+}
+
+h2 {
+  text-align: center;
 }

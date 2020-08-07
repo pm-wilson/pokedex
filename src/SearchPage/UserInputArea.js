@@ -11,8 +11,8 @@ class UserInputArea extends React.Component {
         const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000${this.props.appState.searchText ? '&' + this.props.appState.searchCategory + '=' + this.props.appState.searchText : ''}`),
             pokeData = data.body.results,
             sortedPokeData = pokeData.sort(function (a, b) {
-                let first = a.pokemon.toLowerCase(),
-                    second = b.pokemon.toLowerCase();
+                let first = a.pokemon,
+                    second = b.pokemon;
 
                 if (first < second) {
                     return -1;

@@ -99,3 +99,11 @@ h2 {
 .margin-top {
   margin-top: 30px;
 }
+
+.move-page {
+  margin: 30px auto 0 auto;
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}

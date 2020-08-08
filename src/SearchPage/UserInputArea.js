@@ -5,6 +5,10 @@ class UserInputArea extends React.Component {
     handleSubmit = async (e) => {
         e && e.preventDefault(e);
         this.fetchData();
+
+        this.props.updateInputData({
+            searchPage: 1
+        })
     }
 
     fetchData = async () => {
@@ -12,9 +16,8 @@ class UserInputArea extends React.Component {
             isLoading: true,
         });
 
-        const { searchPage } = this.props.appState;
-        const { searchText, searchCategory } = this.props.appState.appState;
-        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?page=${searchPage}perPage=20${searchText ? '&' + searchCategory + '=' + searchText : ''}`),
+        const { searchText, searchCategory, searchPage, totalPerPage } = this.props.appState.appState;
+        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?page=${searchPage}&perPage=${totalPerPage}${searchText ? '&' + searchCategory + '=' + searchText : ''}`),
             pokeData = data.body.results;
 
         this.props.updateInputData({
@@ -22,6 +25,11 @@ class UserInputArea extends React.Component {
             isLoading: false,
             totalPoke: data.body.count,
         });
+
+
+
+        this.props.urlChange(`?page=${searchPage}${searchText ? '&' + searchCategory + '=' + searchText : ''}`)
+
     }
 
     handleSearchText = (e) => {
@@ -36,7 +44,7 @@ class UserInputArea extends React.Component {
         })
     }
 
-    componentDidMount = () => {
+    componentDidMount = async () => {
         const getFirstData = async () => {
             this.fetchData();
         }
@@ -45,26 +53,37 @@ class UserInputArea extends React.Component {
         }
     }
 
-    pageUp = () => {
-        this.props.updateInputData({
-            searchPage: this.props.searchPage + 1,
+    handlePageUp = async () => {
+        const page = Number(this.props.appState.appState.searchPage),
+            newPage = page + 1;
+
+        await this.props.updateInputData({
+            searchPage: newPage,
         })
+        this.fetchData();
     }
 
-    pageUp = () => {
-        this.props.updateInputData({
-            searchPage: this.props.searchPage - 1,
+    handlePageDown = async () => {
+        const page = Number(this.props.appState.appState.searchPage),
+            newPage = page - 1;
+
+        await this.props.updateInputData({
+            searchPage: newPage,
         })
+        this.fetchData();
     }
 
     render() {
+        const { totalPoke, totalPerPage, searchPage, searchText } = this.props.appState.appState,
+            pagesTotal = Math.ceil(totalPoke / totalPerPage);
+
         return (
             <div className='user-input'>
                 <h4>Filter Controls</h4>
                 <form onSubmit={this.handleSubmit}>
                     <label>
                         <span>Search for:</span>
-                        <input onChange={this.handleSearchText} name='searchName' />
+                        <input onChange={this.handleSearchText} name='searchName' value={searchText} />
                     </label>
                     <label>
                         <span>by</span>
@@ -77,10 +96,10 @@ class UserInputArea extends React.Component {
                     </label>
                     <button>Submit</button>
                 </form>
-                <div>
-                    <button className='margin-top' onChange={this.pageUp}>Page +</button>
-                    <div>1</div>
-                    <button onChange={this.pageDown}>Page -</button>
+                <div className='move-page'>
+                    {searchPage === pagesTotal ? <div></div> : <button onClick={this.handlePageUp}>Page +</button>}
+                    <div>Page {searchPage} of {pagesTotal}</div>
+                    {searchPage === 1 ? <div></div> : <button onClick={this.handlePageDown}>Page -</button>}
                 </div>
             </div>
         );

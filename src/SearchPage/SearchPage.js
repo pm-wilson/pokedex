@@ -7,22 +7,15 @@ class SearchPage extends React.Component {
     state = {
         filteredData: [],
         isLoading: false,
-        searchText: '',
         searchCategory: 'pokemon',
         searchPage: 1,
+        searchText: '',
         totalPoke: 0,
         totalPerPage: 20,
     }
 
     HandleStateChange = (obj) => {
         this.setState(obj);
-    }
-
-    componentDidUpdate = () => {
-        console.log('state', this.state)
-
-
-
     }
 
     HandleURLChange = (text) => {
@@ -33,7 +26,7 @@ class SearchPage extends React.Component {
         const { isLoading } = this.state;
         return (
             <div>{isLoading ? <LoadingSpinner /> :
-                <SearchDisplay urlChange={this.HandleURLChange} appState={this.state} updateInputData={this.HandleStateChange} />}</div>
+                <SearchDisplay pageLocation={this.props.location.search} updateParams={this.UpdateSearchParams} urlChange={this.HandleURLChange} appState={this.state} updateInputData={this.HandleStateChange} />}</div>
         );
     }
 }

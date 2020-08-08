@@ -61,7 +61,7 @@ class BodyArea extends React.Component {
                     <p>Hp: {hp}</p>
                     <p>Speed: {speed}</p>
                     <p className='capitalize'>Types: {type_1}{type_2 !== 'NA' ? ' and ' + type_2 : ''}</p>
-                    <Link to='/'>Back to Search</Link>
+                    <Link className='border' to='/'>Back to Search</Link>
                 </div>
             </section>
         );

@@ -17,7 +17,17 @@ class UserInputArea extends React.Component {
         });
 
         const { searchText, searchCategory, searchPage, totalPerPage } = this.props.appState.appState;
-        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?page=${searchPage}&perPage=${totalPerPage}${searchText ? '&' + searchCategory + '=' + searchText : ''}`),
+
+        const urlParamData = this.getParamData(),
+            pageNumber = urlParamData[0],
+            category = urlParamData[1],
+            search = urlParamData[2];
+
+        const useCategory = searchCategory,
+            usePage = searchPage,
+            useText = searchText;
+
+        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?page=${usePage}&perPage=${totalPerPage}${useText ? '&' + useCategory + '=' + useText : ''}`),
             pokeData = data.body.results;
 
         this.props.updateInputData({
@@ -26,10 +36,23 @@ class UserInputArea extends React.Component {
             totalPoke: data.body.count,
         });
 
+        this.props.urlChange(`?page=${usePage}${useText ? '&category=' + useCategory + '&search=' + useText : ''}`);
+    }
+
+    getParamData = () => {
+        const urlInfo = this.props.appState.pageLocation,
+            dataAndArray = urlInfo.split('&'),
+            dataEqualArray = dataAndArray.map((arrayItem) => {
+                const currentArrayItem = arrayItem.split('=');
+                return currentArrayItem[1];
+            });
+        return dataEqualArray
 
 
-        this.props.urlChange(`?page=${searchPage}${searchText ? '&' + searchCategory + '=' + searchText : ''}`)
-
+        // const urlParamData = this.getParamData(),
+        //     pageNumber = urlParamData[0],
+        //     category = urlParamData[1],
+        //     search = urlParamData[2];
     }
 
     handleSearchText = (e) => {
@@ -45,13 +68,38 @@ class UserInputArea extends React.Component {
     }
 
     componentDidMount = async () => {
+        const { searchText, searchCategory, searchPage } = this.props.appState.appState;
+        const urlParamData = this.getParamData(),
+            pageNumber = urlParamData[0],
+            category = urlParamData[1],
+            search = urlParamData[2];
+
+        if (searchText !== search && searchCategory !== category && searchPage !== pageNumber) {
+            if (pageNumber) {
+                await this.props.updateInputData({
+                    searchPage: pageNumber,
+                });
+            }
+            if (pageNumber && category && search) {
+                await this.props.updateInputData({
+                    searchCategory: category,
+                    searchText: search,
+                });
+            }
+        }
+        console.log('there', searchText, search, searchCategory, category, searchPage, pageNumber)
+
         const getFirstData = async () => {
             this.fetchData();
         }
         if (this.props.appState.appState.filteredData.length === 0) {
             getFirstData();
         }
+        console.log("component mount")
+        console.log('state on app', this.props.appState.appState)
     }
+
+
 
     handlePageUp = async () => {
         const page = Number(this.props.appState.appState.searchPage),
@@ -59,6 +107,9 @@ class UserInputArea extends React.Component {
 
         await this.props.updateInputData({
             searchPage: newPage,
+        })
+        this.props.urlChange({
+
         })
         this.fetchData();
     }

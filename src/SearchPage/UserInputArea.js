@@ -47,7 +47,7 @@ class UserInputArea extends React.Component {
                 return currentArrayItem[1];
             });
         return dataEqualArray
-
+        console.log('bla', urlInfo)
 
         // const urlParamData = this.getParamData(),
         //     pageNumber = urlParamData[0],
@@ -98,8 +98,6 @@ class UserInputArea extends React.Component {
         console.log("component mount")
         console.log('state on app', this.props.appState.appState)
     }
-
-
 
     handlePageUp = async () => {
         const page = Number(this.props.appState.appState.searchPage),

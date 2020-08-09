@@ -7,7 +7,7 @@ class UserInputArea extends React.Component {
         this.fetchData();
 
         this.props.updateInputData({
-            searchPage: 1
+            searchPage: 1,
         })
     }
 
@@ -18,41 +18,17 @@ class UserInputArea extends React.Component {
 
         const { searchText, searchCategory, searchPage, totalPerPage } = this.props.appState.appState;
 
-        const urlParamData = this.getParamData(),
-            pageNumber = urlParamData[0],
-            category = urlParamData[1],
-            search = urlParamData[2];
-
-        const useCategory = searchCategory,
-            usePage = searchPage,
-            useText = searchText;
-
-        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?page=${usePage}&perPage=${totalPerPage}${useText ? '&' + useCategory + '=' + useText : ''}`),
+        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?page=${searchPage}&perPage=${totalPerPage}${searchText ? '&' + searchCategory + '=' + searchText : ''}`),
             pokeData = data.body.results;
 
         this.props.updateInputData({
             filteredData: pokeData,
             isLoading: false,
-            totalPoke: data.body.count,
+            totalPoke: Number(data.body.count),
         });
 
-        this.props.urlChange(`?page=${usePage}${useText ? '&category=' + useCategory + '&search=' + useText : ''}`);
-    }
-
-    getParamData = () => {
-        const urlInfo = this.props.appState.pageLocation,
-            dataAndArray = urlInfo.split('&'),
-            dataEqualArray = dataAndArray.map((arrayItem) => {
-                const currentArrayItem = arrayItem.split('=');
-                return currentArrayItem[1];
-            });
-        return dataEqualArray
-        console.log('bla', urlInfo)
-
-        // const urlParamData = this.getParamData(),
-        //     pageNumber = urlParamData[0],
-        //     category = urlParamData[1],
-        //     search = urlParamData[2];
+        this.props.urlChange(`?page=${searchPage}${searchText ? '&category=' + searchCategory + '&search=' + searchText : ''}`);
+        console.log('fetch')
     }
 
     handleSearchText = (e) => {
@@ -67,36 +43,40 @@ class UserInputArea extends React.Component {
         })
     }
 
+    getQueryParams = this.props.getQueryParams.bind(this)
+
     componentDidMount = async () => {
-        const { searchText, searchCategory, searchPage } = this.props.appState.appState;
-        const urlParamData = this.getParamData(),
-            pageNumber = urlParamData[0],
-            category = urlParamData[1],
-            search = urlParamData[2];
 
-        if (searchText !== search && searchCategory !== category && searchPage !== pageNumber) {
-            if (pageNumber) {
-                await this.props.updateInputData({
-                    searchPage: pageNumber,
-                });
-            }
-            if (pageNumber && category && search) {
-                await this.props.updateInputData({
-                    searchCategory: category,
-                    searchText: search,
-                });
-            }
-        }
-        console.log('there', searchText, search, searchCategory, category, searchPage, pageNumber)
+        const { searchText, searchCategory, searchPage } = this.props.appState.appState,
+            pageNumber = this.getQueryParams("page"),
+            category = this.getQueryParams("page"),
+            search = this.getQueryParams("page");
 
-        const getFirstData = async () => {
-            this.fetchData();
-        }
+        console.log('state pcs', searchPage, searchCategory, searchText)
+        console.log('dm pcs', pageNumber, category, search)
+        console.log('pageequal', searchPage === pageNumber, searchPage, pageNumber)
+        console.log('if statemnt', searchText !== search && searchCategory !== category && searchPage !== pageNumber)
+
+
+        //if (searchText !== search && searchCategory !== category && searchPage !== pageNumber) {
+        // if (pageNumber) {
+        //     await this.props.updateInputData({
+        //         searchPage: Number(pageNumber),
+        //     });
+        // }
+        // if (pageNumber && category && search) {
+        //     await this.props.updateInputData({
+        //         searchCategory: category,
+        //         searchText: search,
+        //     });
+        // }
+        // }
+
         if (this.props.appState.appState.filteredData.length === 0) {
-            getFirstData();
+            await this.fetchData();
+            console.log('didmount fetch')
         }
-        console.log("component mount")
-        console.log('state on app', this.props.appState.appState)
+        console.log('didmount')
     }
 
     handlePageUp = async () => {
@@ -104,12 +84,10 @@ class UserInputArea extends React.Component {
             newPage = page + 1;
 
         await this.props.updateInputData({
-            searchPage: newPage,
+            searchPage: Number(newPage),
         })
-        this.props.urlChange({
 
-        })
-        this.fetchData();
+        await this.fetchData();
     }
 
     handlePageDown = async () => {
@@ -117,9 +95,9 @@ class UserInputArea extends React.Component {
             newPage = page - 1;
 
         await this.props.updateInputData({
-            searchPage: newPage,
+            searchPage: Number(newPage),
         })
-        this.fetchData();
+        await this.fetchData();
     }
 
     render() {

@@ -13,12 +13,12 @@ class SearchPage extends React.Component {
             dataEqualArray = dataAndArray.map((arrayItem, index) => {
                 const currentArrayItem = arrayItem.split('=');
                 const paramName = index === 0 ? currentArrayItem[0].slice(1, currentArrayItem[0].length) : currentArrayItem[0]
-                return { paramName: [paramName], paramValue: currentArrayItem[1] };
+                return { paramName: paramName, paramValue: currentArrayItem[1] };
             });
 
         const desiredParam = dataEqualArray.find(item => item.paramName === paramName)
 
-        return desiredParam ? desiredParam : null
+        return desiredParam ? desiredParam.paramValue : null
     }
 
     state = {

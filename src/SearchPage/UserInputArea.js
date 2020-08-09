@@ -28,53 +28,24 @@ class UserInputArea extends React.Component {
         });
 
         this.props.urlChange(`?page=${searchPage}${searchText ? '&category=' + searchCategory + '&search=' + searchText : ''}`);
-        console.log('fetch')
     }
 
     handleSearchText = (e) => {
         this.props.updateInputData({
-            searchText: e.target.value
+            searchText: e.target.value,
         })
     }
 
     handleSearchCategory = (e) => {
         this.props.updateInputData({
-            searchCategory: e.target.value
+            searchCategory: e.target.value,
         })
     }
 
     componentDidMount = async () => {
-
-        const { searchText, searchCategory, searchPage } = this.props.appState.appState,
-            pageNumber = this.props.getQueryParams("page"),
-            category = this.props.getQueryParams("page"),
-            search = this.props.getQueryParams("page");
-
-        console.log('state pcs', searchPage, searchCategory, searchText)
-        console.log('dm pcs', pageNumber, category, search)
-        console.log('pageequal', searchPage === pageNumber, searchPage, pageNumber)
-        console.log('if statemnt', searchText !== search && searchCategory !== category && searchPage !== pageNumber)
-
-
-        //if (searchText !== search && searchCategory !== category && searchPage !== pageNumber) {
-        // if (pageNumber) {
-        //     await this.props.updateInputData({
-        //         searchPage: Number(pageNumber),
-        //     });
-        // }
-        // if (pageNumber && category && search) {
-        //     await this.props.updateInputData({
-        //         searchCategory: category,
-        //         searchText: search,
-        //     });
-        // }
-        // }
-
         if (this.props.appState.appState.filteredData.length === 0) {
             await this.fetchData();
-            console.log('didmount fetch')
         }
-        console.log('didmount')
     }
 
     handlePageUp = async () => {

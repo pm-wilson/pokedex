@@ -43,14 +43,12 @@ class UserInputArea extends React.Component {
         })
     }
 
-    getQueryParams = this.props.getQueryParams.bind(this)
-
     componentDidMount = async () => {
 
         const { searchText, searchCategory, searchPage } = this.props.appState.appState,
-            pageNumber = this.getQueryParams("page"),
-            category = this.getQueryParams("page"),
-            search = this.getQueryParams("page");
+            pageNumber = this.props.getQueryParams("page"),
+            category = this.props.getQueryParams("page"),
+            search = this.props.getQueryParams("page");
 
         console.log('state pcs', searchPage, searchCategory, searchText)
         console.log('dm pcs', pageNumber, category, search)

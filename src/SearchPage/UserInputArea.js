@@ -4,80 +4,82 @@ import request from 'superagent';
 class UserInputArea extends React.Component {
     handleSubmit = async (e) => {
         e && e.preventDefault(e);
+        this.fetchData();
+
+        this.props.updateInputData({
+            searchPage: 1,
+        })
+    }
+
+    fetchData = async () => {
         this.props.updateInputData({
             isLoading: true,
         });
 
-        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000${this.props.appState.appState.searchText ? '&' + this.props.appState.appState.searchCategory + '=' + this.props.appState.appState.searchText : ''}`),
-            pokeData = data.body.results,
-            sortedPokeData = pokeData.sort(function (a, b) {
-                let first = a.pokemon,
-                    second = b.pokemon;
+        const { searchText, searchCategory, searchPage, totalPerPage } = this.props.appState.appState;
 
-                if (first < second) {
-                    return -1;
-                } else if (second < first) {
-                    return 1;
-                }
-                return 0;
-            })
+        const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?page=${searchPage}&perPage=${totalPerPage}${searchText ? '&' + searchCategory + '=' + searchText : ''}`),
+            pokeData = data.body.results;
 
         this.props.updateInputData({
-            filteredData: sortedPokeData,
+            filteredData: pokeData,
             isLoading: false,
+            totalPoke: Number(data.body.count),
         });
+
+        this.props.urlChange(`?page=${searchPage}${searchText ? '&category=' + searchCategory + '&search=' + searchText : ''}`);
     }
 
     handleSearchText = (e) => {
         this.props.updateInputData({
-            searchText: e.target.value
+            searchText: e.target.value,
         })
     }
 
     handleSearchCategory = (e) => {
         this.props.updateInputData({
-            searchCategory: e.target.value
+            searchCategory: e.target.value,
         })
     }
 
-    componentDidMount = () => {
-        const getFirstData = async () => {
-            this.props.updateInputData({
-                isLoading: true,
-            });
-
-            const data = await request.get(`https://alchemy-pokedex.herokuapp.com/api/pokedex?perPage=1000`),
-                pokeData = data.body.results,
-                sortedPokeData = pokeData.sort(function (a, b) {
-                    let first = a.pokemon,
-                        second = b.pokemon;
-
-                    if (first < second) {
-                        return -1;
-                    } else if (second < first) {
-                        return 1;
-                    }
-                    return 0;
-                })
-
-            this.props.updateInputData({
-                filteredData: sortedPokeData,
-                isLoading: false,
-            });
-        }
+    componentDidMount = async () => {
         if (this.props.appState.appState.filteredData.length === 0) {
-            getFirstData();
+            await this.fetchData();
         }
     }
 
+    handlePageUp = async () => {
+        const page = Number(this.props.appState.appState.searchPage),
+            newPage = page + 1;
+
+        await this.props.updateInputData({
+            searchPage: Number(newPage),
+        })
+
+        await this.fetchData();
+    }
+
+    handlePageDown = async () => {
+        const page = Number(this.props.appState.appState.searchPage),
+            newPage = page - 1;
+
+        await this.props.updateInputData({
+            searchPage: Number(newPage),
+        })
+        await this.fetchData();
+    }
+
     render() {
+        const { totalPoke, totalPerPage, searchPage, searchText } = this.props.appState.appState,
+            pagesTotal = Math.ceil(totalPoke / totalPerPage);
+
         return (
-            <div>
+            <div className='user-input'>
                 <h4>Filter Controls</h4>
                 <form onSubmit={this.handleSubmit}>
                     <label>
                         <span>Search for:</span>
-                        <input onChange={this.handleSearchText} name='searchName' />
+                        <input onChange={this.handleSearchText} name='searchName' value={searchText} />
                     </label>
                     <label>
                         <span>by</span>
@@ -90,6 +92,11 @@ class UserInputArea extends React.Component {
                     </label>
                     <button>Submit</button>
                 </form>
+                <div className='move-page'>
+                    {searchPage === pagesTotal ? <div></div> : <button onClick={this.handlePageUp}>Page +</button>}
+                    <div>Page {searchPage} of {pagesTotal}</div>
+                    {searchPage === 1 ? <div></div> : <button onClick={this.handlePageDown}>Page -</button>}
+                </div>
             </div>
         );
     }
